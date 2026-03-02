@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
+import LoginModel from "../components/LoginModel";
 
 const Home = () => {
   const highlights = [
@@ -7,6 +8,8 @@ const Home = () => {
     "Fully Responsive Layouts",
     "Production Ready Output",
   ];
+
+  const [openLogin, setOpenLogin] = useState(false);
 
   return (
     <div className="relative min-h-screen bg-[#040404] text-white overflow-hidden">
@@ -55,7 +58,10 @@ const Home = () => {
         </motion.p>
 
         {/* fixed typo font-semibold */}
-        <button className="mt-12 px-10 py-4 rounded-xl bg-white text-black font-semibold hover:scale-105 transition">
+        <button
+          className="mt-12 px-10 py-4 rounded-xl bg-white text-black font-semibold hover:scale-105 transition"
+          onClick={() => setOpenLogin(true)}
+        >
           Get Started
         </button>
       </section>
@@ -119,6 +125,10 @@ const Home = () => {
           </div>
         </div>
       </footer>
+
+      {openLogin && (
+        <LoginModel open={openLogin} onClose={() => setOpenLogin(false)} />
+      )}
     </div>
   );
 };
