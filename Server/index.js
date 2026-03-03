@@ -4,6 +4,7 @@ const express = require("express");
 const connectDB = require("./config/db");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./routes/authRoute");
+const userRouter = require("./routes/userRoute");
 const cors = require("cors");
 
 const app = express();
@@ -24,6 +25,7 @@ const PORT = process.env.PORT || 5000;
 
 // routes
 app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
 
 // test route
 app.get("/", (req, res) => {
