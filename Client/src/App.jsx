@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
+export const serverUrl="http://localhost:3000"
 const App = () => {
   return (
     <BrowserRouter>
