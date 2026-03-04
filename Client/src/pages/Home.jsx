@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import LoginModel from "../components/LoginModel";
+import { useSelector } from "react-redux";
+import { Coins } from "lucide-react";
 
 const Home = () => {
   const highlights = [
@@ -9,8 +11,10 @@ const Home = () => {
     "Production Ready Output",
   ];
 
-  const [openLogin, setOpenLogin] = useState(false);
+  const [openProfile, setOpenProfile] = useState(false);
 
+  const [openLogin, setOpenLogin] = useState(false);
+  const { userData } = useSelector((state) => state.user);
   return (
     <div className="relative min-h-screen bg-[#040404] text-white overflow-hidden">
       {/* Navbar */}
@@ -28,9 +32,69 @@ const Home = () => {
               Pricing
             </div>
 
-            <button className="px-4 py-2 rounded-lg border border-white/20 hover:bg-white/10 text-sm">
-              Get Started
-            </button>
+            {userData && (
+              <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm cursor-pointer hover:bg-white/10 transition">
+                <Coins size={14} className="text-yellow-400" />
+                <span className="text-zinc-300">Credits</span>
+                <span>{userData.credits}</span>
+                <span className="font-semibold">+</span>
+              </div>
+            )}
+
+            {!userData ? (
+              <button className="px-4 py-2 rounded-lg border border-white/20 hover:bg-white/10 text-sm">
+                Get Started
+              </button>
+            ) : (
+              <div className="relative">
+                <button
+                  className="flex items-center"
+                  onClick={() => setOpenProfile(!openProfile)}
+                >
+                  <img
+                    className="w-9 h-9 rounded-full border border-white/20 object-cover"
+                    src={
+                      userData.avatar ||
+                      `https://ui-avatars.com/api/?name=${userData.name}`
+                    }
+                    alt=""
+                  />
+                </button>
+
+                <AnimatePresence>
+                  {openProfile && (
+                    <>
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        className="absolute right-0 mt-3 w-60 z-50 rounded-xl bg-[#0b0b0b] border border-white/10 shadow-2xl overflow-hidden"
+                      >
+                        <div className="px-4 py-3 border-b border-white/10">
+                          <p className="text-sm font-medium truncate">
+                            {userData.name}
+                          </p>
+                          <p className="text-xs text-zinc-500 truncate ">
+                            {userData.email}
+                          </p>
+                        </div>
+                        <button className="md:hidden w-full px-4 py-3 flex items-center gap-2 text-sm border-b border-white/10 hover:bg-white/10">
+                          <Coins size={14} className="text-yellow-400" />
+                          <span className="text-zinc-300">Credits</span>
+                          <span>{userData.credits}</span>
+                          <span className="font-semibold">+</span>
+                        </button>
+
+                        <button className="w-full px-4 py-3 text-left text-sm hover:bg-white/5">
+                          Dashboard
+                        </button>
+                        <button className="w-full px-4 py-3 text-left text-sm text-red-400 hover:bg-white/5">Logout</button>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
           </div>
         </div>
       </motion.div>
