@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import LoginModel from "../components/LoginModel";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Coins } from "lucide-react";
+import axios from "axios";
+import { serverUrl } from "../App";
+import { setUserData } from "../redux/userSlice";
 
 const Home = () => {
   const highlights = [
@@ -11,10 +14,23 @@ const Home = () => {
     "Production Ready Output",
   ];
 
-  const [openProfile, setOpenProfile] = useState(false);
+  const dispatch = useDispatch();
 
+  const [openProfile, setOpenProfile] = useState(false);
   const [openLogin, setOpenLogin] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await axios.get(`${serverUrl}/api/auth/logout`, { withCredentials: true });
+      dispatch(setUserData(null));
+      setOpenProfile(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const { userData } = useSelector((state) => state.user);
+
   return (
     <div className="relative min-h-screen bg-[#040404] text-white overflow-hidden">
       {/* Navbar */}
@@ -42,7 +58,10 @@ const Home = () => {
             )}
 
             {!userData ? (
-              <button className="px-4 py-2 rounded-lg border border-white/20 hover:bg-white/10 text-sm">
+              <button
+                onClick={() => setOpenLogin(true)}
+                className="px-4 py-2 rounded-lg border border-white/20 hover:bg-white/10 text-sm"
+              >
                 Get Started
               </button>
             ) : (
@@ -63,34 +82,39 @@ const Home = () => {
 
                 <AnimatePresence>
                   {openProfile && (
-                    <>
-                      <motion.div
-                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                        className="absolute right-0 mt-3 w-60 z-50 rounded-xl bg-[#0b0b0b] border border-white/10 shadow-2xl overflow-hidden"
-                      >
-                        <div className="px-4 py-3 border-b border-white/10">
-                          <p className="text-sm font-medium truncate">
-                            {userData.name}
-                          </p>
-                          <p className="text-xs text-zinc-500 truncate ">
-                            {userData.email}
-                          </p>
-                        </div>
-                        <button className="md:hidden w-full px-4 py-3 flex items-center gap-2 text-sm border-b border-white/10 hover:bg-white/10">
-                          <Coins size={14} className="text-yellow-400" />
-                          <span className="text-zinc-300">Credits</span>
-                          <span>{userData.credits}</span>
-                          <span className="font-semibold">+</span>
-                        </button>
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      className="absolute right-0 mt-3 w-60 z-50 rounded-xl bg-[#0b0b0b] border border-white/10 shadow-2xl overflow-hidden"
+                    >
+                      <div className="px-4 py-3 border-b border-white/10">
+                        <p className="text-sm font-medium truncate">
+                          {userData.name}
+                        </p>
+                        <p className="text-xs text-zinc-500 truncate">
+                          {userData.email}
+                        </p>
+                      </div>
 
-                        <button className="w-full px-4 py-3 text-left text-sm hover:bg-white/5">
-                          Dashboard
-                        </button>
-                        <button className="w-full px-4 py-3 text-left text-sm text-red-400 hover:bg-white/5">Logout</button>
-                      </motion.div>
-                    </>
+                      <button className="md:hidden w-full px-4 py-3 flex items-center gap-2 text-sm border-b border-white/10 hover:bg-white/10">
+                        <Coins size={14} className="text-yellow-400" />
+                        <span className="text-zinc-300">Credits</span>
+                        <span>{userData.credits}</span>
+                        <span className="font-semibold">+</span>
+                      </button>
+
+                      <button className="w-full px-4 py-3 text-left text-sm hover:bg-white/5">
+                        Dashboard
+                      </button>
+
+                      <button
+                        onClick={handleLogout}
+                        className="w-full px-4 py-3 text-left text-sm text-red-400 hover:bg-white/5"
+                      >
+                        Logout
+                      </button>
+                    </motion.div>
                   )}
                 </AnimatePresence>
               </div>
@@ -121,7 +145,6 @@ const Home = () => {
           production-ready website
         </motion.p>
 
-        {/* fixed typo font-semibold */}
         <button
           className="mt-12 px-10 py-4 rounded-xl bg-white text-black font-semibold hover:scale-105 transition"
           onClick={() => setOpenLogin(true)}
@@ -132,7 +155,6 @@ const Home = () => {
 
       {/* Card section */}
       <section className="max-w-7xl mx-auto px-6 pb-32">
-        {/* added grid */}
         <div className="grid md:grid-cols-3 gap-6">
           {highlights.map((highlight, index) => (
             <motion.div
@@ -156,13 +178,11 @@ const Home = () => {
       {/* Footer */}
       <footer className="border-t border-white/10 bg-black/40 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-          {/* Left */}
           <div className="text-zinc-400">
             © {new Date().getFullYear()}
             <span className="text-white font-medium ml-1">GenWeb.ai</span>
           </div>
 
-          {/* Center links */}
           <div className="flex gap-6 text-zinc-400">
             <span className="hover:text-white cursor-pointer transition">
               Privacy
@@ -175,7 +195,6 @@ const Home = () => {
             </span>
           </div>
 
-          {/* Right */}
           <div className="flex gap-4 text-zinc-400">
             <span className="hover:text-white cursor-pointer transition">
               Twitter
